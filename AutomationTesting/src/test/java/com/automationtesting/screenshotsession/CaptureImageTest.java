@@ -41,7 +41,7 @@ public class CaptureImageTest {
 		
 		String project_location=System.getProperty("user.dir");
 		
-		File Desti= new File(project_location+"\\CaptureImages\\loginTest.png");
+		File Desti= new File(project_location+"\\CaptureImages\\TestingLogin.png");
 		
 		FileUtils.copyFile(src, Desti);
 		
