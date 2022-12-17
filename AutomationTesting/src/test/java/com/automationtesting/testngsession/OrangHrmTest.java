@@ -69,13 +69,14 @@ public class OrangHrmTest {
 
 		driver.findElement(By.cssSelector("button.oxd-button")).click();
 	}
-
+     
+	//Author is Guru Mohan Reddy
 	@org.testng.annotations.Test(priority = 1)
 	public void addEmployee_Page() throws InterruptedException {
 		driver.findElement(By.xpath("//a//span[.='PIM']")).click();
 		driver.findElement(By.xpath("//a[.='Add Employee']")).click();
 
-		Thread.sleep(3000);
+		Thread.sleep(5000);
 
 		boolean condition = driver.findElement(By.xpath("(//h6)[2]")).isDisplayed();
 
