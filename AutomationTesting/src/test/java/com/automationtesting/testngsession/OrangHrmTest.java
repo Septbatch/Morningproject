@@ -70,7 +70,7 @@ public class OrangHrmTest {
 		driver.findElement(By.cssSelector("button.oxd-button")).click();
 	}
      
-	//Author is Guru Mohan Reddy
+	//Author is GuruMohanReddy
 	@org.testng.annotations.Test(priority = 1)
 	public void addEmployee_Page() throws InterruptedException {
 		driver.findElement(By.xpath("//a//span[.='PIM']")).click();
