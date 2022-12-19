@@ -2,7 +2,6 @@ package com.automationtesting.testngsession;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
@@ -18,6 +17,8 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
+import org.testng.asserts.SoftAssert;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -25,6 +26,31 @@ public class OrangHrmTest {
 	WebDriver driver;
 
 	Properties pr;
+
+	SoftAssert soft = new SoftAssert();
+
+	@DataProvider(name = "AddEmployee")
+	public Object[][] readData() {
+
+		Object[][] data = new Object[3][4];
+
+		data[0][0] = "Ram";
+		data[0][1] = "Testing";
+		data[0][2] = "Trainier";
+		data[0][3] = "20455";
+
+		data[1][0] = "Rahim";
+		data[1][1] = "Testing";
+		data[1][2] = "Trainer";
+		data[1][3] = "20466";
+
+		data[2][0] = "Cloud";
+		data[2][1] = "Testing";
+		data[2][2] = "Trainer";
+		data[2][3] = "20366";
+
+		return data;
+	}
 
 	@BeforeSuite
 	public void propertiesData() throws IOException {
@@ -69,9 +95,9 @@ public class OrangHrmTest {
 
 		driver.findElement(By.cssSelector("button.oxd-button")).click();
 	}
-     
-	//Author is GuruMohanReddy
-	@org.testng.annotations.Test(priority = 1)
+
+	// Author is GuruMohanReddy
+	@org.testng.annotations.Test(priority = 1, enabled = false)
 	public void addEmployee_Page() throws InterruptedException {
 		driver.findElement(By.xpath("//a//span[.='PIM']")).click();
 		driver.findElement(By.xpath("//a[.='Add Employee']")).click();
@@ -80,22 +106,31 @@ public class OrangHrmTest {
 
 		boolean condition = driver.findElement(By.xpath("(//h6)[2]")).isDisplayed();
 
-		Assert.assertTrue(condition, "AddEmployee page is not opened");
+		/*
+		 * Assert.assertFalse(condition, "AddEmployee page is not opened"); //hard
+		 * assertion System.out.println("Add Employee page completed");
+		 * System.out.println(driver.getTitle());
+		 */
+
+		soft.assertFalse(condition);
+
+		System.out.println(driver.getTitle());
+		soft.assertAll();
 	}
-	
-	@org.testng.annotations.Test(priority = 2)
-	public void RegisterEmployee() throws InterruptedException {
+
+	@org.testng.annotations.Test(priority = 2, dataProvider = "AddEmployee")
+	public void RegisterEmployee(String fname, String mname, String lname, String empid) throws InterruptedException {
 		driver.findElement(By.xpath("//a//span[.='PIM']")).click();
 		driver.findElement(By.xpath("//a[.='Add Employee']")).click();
-		driver.findElement(By.name("firstName")).sendKeys("Ram");
-		driver.findElement(By.name("middleName")).sendKeys("Mohan");
-		driver.findElement(By.name("lastName")).sendKeys("Rao");
-		driver.findElement(By.xpath("//label[text()='Employee Id']/../../div[2]/input")).sendKeys("123987");
+		driver.findElement(By.name("firstName")).sendKeys(fname);
+		driver.findElement(By.name("middleName")).sendKeys(mname);
+		driver.findElement(By.name("lastName")).sendKeys(lname);
+		driver.findElement(By.xpath("//label[text()='Employee Id']/../../div[2]/input")).sendKeys(empid);
 		driver.findElement(By.xpath("//button[@type='submit']")).click();
-		
-		boolean condition=driver.findElement(By.xpath("(//h6)[3]")).isDisplayed();
-		Assert.assertFalse(condition, "Unable to add employee Test Failed");
-		
+
+		boolean condition = driver.findElement(By.xpath("(//h6)[3]")).isDisplayed();
+		Assert.assertTrue(condition, "Unable to add employee Test Failed");
+
 	}
 
 	@AfterMethod
