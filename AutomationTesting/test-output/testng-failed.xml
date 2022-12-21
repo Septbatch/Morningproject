@@ -5,13 +5,14 @@
     <classes>
       <class name="com.automationtesting.testngsession.OrangHrmTest">
         <methods>
-          <include name="RegisterEmployee"/>
           <include name="propertiesData"/>
           <include name="logOut"/>
+          <include name="addEmployee_Page"/>
           <include name="login"/>
           <include name="launchUrl"/>
           <include name="tearDown"/>
           <include name="basicSetup"/>
+          <include name="CaptureFailedImage"/>
         </methods>
       </class> <!-- com.automationtesting.testngsession.OrangHrmTest -->
     </classes>

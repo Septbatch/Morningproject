@@ -2,15 +2,24 @@ package com.automationtesting.testngsession;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -50,6 +59,35 @@ public class OrangHrmTest {
 		data[2][3] = "20366";
 
 		return data;
+	}
+
+	@DataProvider(name= "Empdata1")
+	public Object[][] testData1() throws IOException{
+		
+		File file= new File("C:\\Users\\gurum\\Desktop\\Cloud Sep Batch\\Demo\\MyProject\\AutomationTesting\\EmpData.xlsx");
+		
+		FileInputStream fi= new FileInputStream(file);
+		
+		XSSFWorkbook wb= new XSSFWorkbook(fi);
+		
+		XSSFSheet sh= wb.getSheetAt(0);
+		
+		int noofrows = sh.getPhysicalNumberOfRows(); //written data rows active rows
+		int noofcolums = sh.getRow(0).getLastCellNum();
+		
+		Object[][] data= new Object[noofrows-1][noofcolums];
+		
+		for(int i = 0; i<noofrows-1; i++) {
+			for(int j=0; j<noofcolums;j++) {  //3 , 0,1,2
+				DataFormatter format= new DataFormatter(); // It will allow any type data to print
+			     
+				data[i][j]=format.formatCellValue((sh.getRow(i+1).getCell(j)));
+				
+			}
+		}
+		
+		return data;
+		
 	}
 
 	@BeforeSuite
@@ -97,7 +135,7 @@ public class OrangHrmTest {
 	}
 
 	// Author is GuruMohanReddy
-	@org.testng.annotations.Test(priority = 1, enabled = false)
+	@org.testng.annotations.Test(priority = 1, enabled = true)
 	public void addEmployee_Page() throws InterruptedException {
 		driver.findElement(By.xpath("//a//span[.='PIM']")).click();
 		driver.findElement(By.xpath("//a[.='Add Employee']")).click();
@@ -112,13 +150,13 @@ public class OrangHrmTest {
 		 * System.out.println(driver.getTitle());
 		 */
 
-		soft.assertFalse(condition);
+		soft.assertTrue(condition);
 
 		System.out.println(driver.getTitle());
 		soft.assertAll();
 	}
 
-	@org.testng.annotations.Test(priority = 2, dataProvider = "AddEmployee")
+	@org.testng.annotations.Test(priority = 2, dataProvider = "Empdata1", enabled=false)
 	public void RegisterEmployee(String fname, String mname, String lname, String empid) throws InterruptedException {
 		driver.findElement(By.xpath("//a//span[.='PIM']")).click();
 		driver.findElement(By.xpath("//a[.='Add Employee']")).click();
@@ -131,6 +169,17 @@ public class OrangHrmTest {
 		boolean condition = driver.findElement(By.xpath("(//h6)[3]")).isDisplayed();
 		Assert.assertTrue(condition, "Unable to add employee Test Failed");
 
+	}
+	
+	@AfterMethod
+	public void CaptureFailedImage(ITestResult result) throws IOException {
+		
+		if(result.getStatus() == ITestResult.SUCCESS) {
+			File sorce=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			File desti =new File("C:\\Users\\gurum\\Desktop\\Cloud Sep Batch\\Demo\\MyProject\\AutomationTesting\\CaptureImages\\AddEmployeefailed.png");
+			FileUtils.copyFile(sorce, desti);
+		}
+		
 	}
 
 	@AfterMethod
